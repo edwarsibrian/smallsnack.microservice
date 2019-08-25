@@ -8,7 +8,7 @@ namespace SmallSnack.Microservice.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ValuesController : ControllerBase
+    public class ValuesController : ControllerBase 
     {
         // GET api/values
         [HttpGet]
