@@ -1,9 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
-namespace SmallSnack.Microservice.Repository.Entities
+namespace SmallSnack.Microservice.Domain.Entities
 {
     public class User
     {
@@ -23,7 +21,7 @@ namespace SmallSnack.Microservice.Repository.Entities
         public byte[] PasswordHash { get; set; }
 
         public byte[] PasswordSalt { get; set; }
-        
+
         public IEnumerable<PurchaseHistory> PurchaseHistories { get; set; }
     }
 }

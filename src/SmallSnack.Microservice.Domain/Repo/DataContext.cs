@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using SmallSnack.Microservice.Repository.Entities;
+using SmallSnack.Microservice.Domain.Entities;
 
-namespace SmallSnack.Microservice.Repository.Repo
+namespace SmallSnack.Microservice.Domain.Repo
 {
     public class DataContext : DbContext
     {

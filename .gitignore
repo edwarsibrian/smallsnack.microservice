@@ -9,3 +9,4 @@
 /src/SmallSnack.Microservice.Repository/obj
 /src/SmallSnack.Microservice.Domain/bin/Debug/netcoreapp2.2
 /src/SmallSnack.Microservice.Repository/bin/Debug/netcoreapp2.2
+*.config
