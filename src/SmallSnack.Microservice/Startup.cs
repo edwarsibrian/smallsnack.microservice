@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using System.Reflection;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -11,7 +12,10 @@ using SmallSnack.Microservice.Domain.Services;
 using System.Text;
 using System.Threading.Tasks;
 using MediatR;
+using Microsoft.AspNetCore.Http;
+using SmallSnack.Microservice.Domain.Commands;
 using SmallSnack.Microservice.Domain.Repo;
+using Swashbuckle.AspNetCore.Swagger;
 
 namespace SmallSnack.Microservice
 {
@@ -34,11 +38,28 @@ namespace SmallSnack.Microservice
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services
-                .AddMediatR(typeof(Startup));
+            services.Configure<CookiePolicyOptions>(options =>
+            {
+                options.CheckConsentNeeded = context => true;
+                options.MinimumSameSitePolicy = SameSiteMode.None;
+            });
 
+            // Add Mediator
+            services
+                .AddMediatR(typeof(RegisterUserCommand).GetTypeInfo().Assembly);
+
+
+            services.AddMvc();
+
+            // Configure swagger
+            services.AddSwaggerGen(c =>
+                {
+                    c.SwaggerDoc("v1", new Info {Title = "SmallSnack API", Version = "v1"});
+                }
+            );
+
+            //Configure Context
             services.AddDbContext<DataContext>(x => x.UseInMemoryDatabase("SmallSnack"));
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             // configure strongly typed settings objects
             var appSettingsSection = Configuration.GetSection("AppSettings");
@@ -79,6 +100,8 @@ namespace SmallSnack.Microservice
                         ValidateAudience = false
                     };
                 });
+
+            services.AddScoped<IUserService, UserService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -88,14 +111,15 @@ namespace SmallSnack.Microservice
             {
                 app.UseDeveloperExceptionPage();
             }
-            else
-            {
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
-            }
-
-            app.UseHttpsRedirection();
+            
             app.UseMvc();
+
+            // Enable middleware to serve generated Swagger as a JSON endpoint.
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "SmallSnack API");
+            });
         }
     }
 }

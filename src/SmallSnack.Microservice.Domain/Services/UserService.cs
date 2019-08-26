@@ -3,15 +3,17 @@ using SmallSnack.Microservice.Domain.Repo;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace SmallSnack.Microservice.Domain.Services
 {
     public interface IUserService
     {
-        User Authenticate(string username, string password);
+        Task<User> Authenticate(string username, string password);
         IEnumerable<User> GetAll();
         User GetById(int id);
-        User Create(User user, string password);
+        Task<User> Create(User user, string password);
         void Update(User user, string password = null);
         void Delete(int id);
     }
@@ -25,12 +27,12 @@ namespace SmallSnack.Microservice.Domain.Services
             _context = context;
         }
 
-        public User Authenticate(string username, string password)
+        public async Task<User> Authenticate(string username, string password)
         {
             if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
                 return null;
 
-            var user = _context.Users.SingleOrDefault(x => x.Username == username);
+            var user = await _context.Users.SingleOrDefaultAsync(x => x.Username == username);
 
             // check if username exists
             if (user == null)
@@ -54,9 +56,25 @@ namespace SmallSnack.Microservice.Domain.Services
             throw new System.NotImplementedException();
         }
 
-        public User Create(User user, string password)
+        public async Task<User> Create(User user, string password)
         {
-            throw new System.NotImplementedException();
+            // validation
+            if (string.IsNullOrWhiteSpace(password))
+                throw new Exception("Password is required");
+
+            if (_context.Users.Any(x => x.Username == user.Username))
+                throw new Exception("Username \"" + user.Username + "\" is already taken");
+
+            byte[] passwordHash, passwordSalt;
+            CreatePasswordHash(password, out passwordHash, out passwordSalt);
+
+            user.PasswordHash = passwordHash;
+            user.PasswordSalt = passwordSalt;
+
+            await _context.Users.AddAsync(user);
+            await _context.SaveChangesAsync();
+
+            return user;
         }
 
         public void Update(User user, string password = null)
@@ -86,6 +104,18 @@ namespace SmallSnack.Microservice.Domain.Services
             }
 
             return true;
+        }
+
+        private static void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
+        {
+            if (password == null) throw new ArgumentNullException("password");
+            if (string.IsNullOrWhiteSpace(password)) throw new ArgumentException("Value cannot be empty or whitespace only string.", "password");
+
+            using (var hmac = new System.Security.Cryptography.HMACSHA512())
+            {
+                passwordSalt = hmac.Key;
+                passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
+            }
         }
     }
 }

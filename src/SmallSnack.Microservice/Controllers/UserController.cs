@@ -9,17 +9,25 @@ namespace SmallSnack.Microservice.Controllers
 {
     [Authorize]
     [ApiController]
-    [Route("api/[controller]")]
-    public class UsersController : ControllerBase
+    [Route("api/User")]
+    public class UserController : ControllerBase
     {
         private readonly IMediator _mediator;
-        public UsersController(IMediator mediator)
+        public UserController(IMediator mediator)
         {
             _mediator = mediator;
         }
 
-        [HttpPost]
+        [AllowAnonymous]
+        [HttpPost("authenticate")]
         public async Task<UserAuthenticatedResponse> Authenticate(UserAuthenticateCommand command)
+        {
+            return await _mediator.Send(command);
+        }
+
+        [AllowAnonymous]
+        [HttpPost("register")]
+        public async Task<bool> Register(RegisterUserCommand command)
         {
             return await _mediator.Send(command);
         }
