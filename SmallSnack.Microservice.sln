@@ -7,8 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SmallSnack.Microservice", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SmallSnack.Microservice.Domain", "src\SmallSnack.Microservice.Domain\SmallSnack.Microservice.Domain.csproj", "{D69F17E7-3FB6-42C9-A9B9-A277A91E9154}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmallSnack.Microservice.Repository", "src\SmallSnack.Microservice.Repository\SmallSnack.Microservice.Repository.csproj", "{668ADEDA-847B-491F-8A38-8031088976C0}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,10 +21,6 @@ Global
 		{D69F17E7-3FB6-42C9-A9B9-A277A91E9154}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D69F17E7-3FB6-42C9-A9B9-A277A91E9154}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D69F17E7-3FB6-42C9-A9B9-A277A91E9154}.Release|Any CPU.Build.0 = Release|Any CPU
-		{668ADEDA-847B-491F-8A38-8031088976C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{668ADEDA-847B-491F-8A38-8031088976C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{668ADEDA-847B-491F-8A38-8031088976C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{668ADEDA-847B-491F-8A38-8031088976C0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

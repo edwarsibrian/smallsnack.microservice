@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace SmallSnack.Microservice.Repository.Entities
+namespace SmallSnack.Microservice.Domain.Entities
 {
     public class Product
     {
