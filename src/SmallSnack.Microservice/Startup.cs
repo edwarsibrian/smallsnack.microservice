@@ -102,6 +102,7 @@ namespace SmallSnack.Microservice
                 });
 
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IProductService, ProductService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -111,7 +112,15 @@ namespace SmallSnack.Microservice
             {
                 app.UseDeveloperExceptionPage();
             }
-            
+
+            // global cors policy
+            app.UseCors(x => x
+                .AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader());
+
+            app.UseAuthentication();
+
             app.UseMvc();
 
             // Enable middleware to serve generated Swagger as a JSON endpoint.

@@ -21,15 +21,17 @@ namespace SmallSnack.Microservice.Domain
         {
             var user = await _userService.Authenticate(request.UserName, request.Password);
 
-            if (user == null)
+            var userAuthenticateResponse = new UserAuthenticatedResponse();
+
+            if (user != null)
             {
-                throw new Exception("Username or password is incorrect");
+                userAuthenticateResponse.Id = user.Id;
+                userAuthenticateResponse.UserName = user.Username;
+                userAuthenticateResponse.FirstName = user.FirstName;
+                userAuthenticateResponse.LastName = user.LastName;
             }
 
-            return new UserAuthenticatedResponse
-            {
-                UserName = user.Username
-            };
+            return userAuthenticateResponse;
         }
     }
 }
