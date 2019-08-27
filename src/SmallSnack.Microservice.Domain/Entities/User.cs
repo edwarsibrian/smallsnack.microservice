@@ -11,7 +11,7 @@ namespace SmallSnack.Microservice.Domain.Entities
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
-        public bool IsAdmin { get; set; }
+        public string Role { get; set; }
 
         public string FirstName { get; set; }
 

@@ -12,7 +12,7 @@ namespace SmallSnack.Microservice.Domain.Services
     {
         Task<User> Authenticate(string username, string password);
         IEnumerable<User> GetAll();
-        User GetById(int id);
+        Task<User> GetById(int id);
         Task<User> Create(User user, string password);
         void Update(User user, string password = null);
         void Delete(int id);
@@ -51,9 +51,14 @@ namespace SmallSnack.Microservice.Domain.Services
             throw new System.NotImplementedException();
         }
 
-        public User GetById(int id)
+        public async Task<User> GetById(int id)
         {
-            throw new System.NotImplementedException();
+            if (id <= 0)
+            {
+                throw new Exception("User Id invalid");
+            }
+
+            return await _context.Users.FindAsync(id);
         }
 
         public async Task<User> Create(User user, string password)
