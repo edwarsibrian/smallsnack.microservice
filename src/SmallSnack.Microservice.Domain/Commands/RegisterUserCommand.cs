@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using SmallSnack.Microservice.Domain.Enums;
 
 namespace SmallSnack.Microservice.Domain.Commands
 {
@@ -11,6 +12,7 @@ namespace SmallSnack.Microservice.Domain.Commands
         public string LastName { get; set; }
         public string UserName { get; set; }
         public string Password { get; set; }
-        public bool IsAdmin { get; set; }
+        
+        public string Role { get; set; }
     }
 }

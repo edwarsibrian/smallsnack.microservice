@@ -23,10 +23,11 @@ namespace SmallSnack.Microservice.Domain
                 FirstName = request.FirstName,
                 LastName = request.LastName,
                 Username = request.UserName,
-                IsAdmin = request.IsAdmin
+                Password = request.Password,
+                Role = request.Role
             };
 
-            return await _userService.Create(user, request.Password) != null;
+            return await _userService.Create(user) != null;
         }
     }
 }

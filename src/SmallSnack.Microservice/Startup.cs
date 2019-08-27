@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -15,6 +16,7 @@ using MediatR;
 using Microsoft.AspNetCore.Http;
 using SmallSnack.Microservice.Domain.Commands;
 using SmallSnack.Microservice.Domain.Repo;
+using SmallSnack.Microservice.Services;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace SmallSnack.Microservice
@@ -23,18 +25,11 @@ namespace SmallSnack.Microservice
     {
         public Startup(IConfiguration configuration, IHostingEnvironment environment)
         {
-            var builder = new ConfigurationBuilder()
-                .SetBasePath(environment.ContentRootPath)
-                .AddJsonFile("appsettings.json", false, true)
-                .AddJsonFile($"appsettings.{environment.EnvironmentName}.json", true)
-                .AddEnvironmentVariables();
-            Configuration = builder.Build();
-            Environment = environment;
+            Configuration = configuration;
         }
 
         public IConfiguration Configuration { get; }
-        public IHostingEnvironment Environment { get; }
-
+        
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
@@ -47,10 +42,7 @@ namespace SmallSnack.Microservice
             // Add Mediator
             services
                 .AddMediatR(typeof(RegisterUserCommand).GetTypeInfo().Assembly);
-
-
-            services.AddMvc();
-
+            
             // Configure swagger
             services.AddSwaggerGen(c =>
                 {
@@ -61,45 +53,22 @@ namespace SmallSnack.Microservice
             //Configure Context
             services.AddDbContext<DataContext>(x => x.UseInMemoryDatabase("SmallSnack"));
 
-            // configure strongly typed settings objects
-            var appSettingsSection = Configuration.GetSection("AppSettings");
-            services.Configure<AppSettings>(appSettingsSection);
+            services.AddTransient<AccountService>();
 
-            // configure jwt authentication
-            var appSettings = appSettingsSection.Get<AppSettings>();
-            var key = Encoding.ASCII.GetBytes(appSettings.Secret);
-            services.AddAuthentication(x =>
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
                 {
-                    x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                    x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                })
-                .AddJwtBearer(x =>
-                {
-                    x.Events = new JwtBearerEvents
+                    var signingKey = Convert.FromBase64String(Configuration["Jwt:SigningSecret"]);
+                    options.TokenValidationParameters = new TokenValidationParameters
                     {
-                        OnTokenValidated = context =>
-                        {
-                            var userService = context.HttpContext.RequestServices.GetRequiredService<IUserService>();
-                            var userId = int.Parse(context.Principal.Identity.Name);
-                            var user = userService.GetById(userId);
-                            if (user == null)
-                            {
-                                // return unauthorized if user no longer exists
-                                context.Fail("Unauthorized");
-                            }
-                            return Task.CompletedTask;
-                        }
-                    };
-                    x.RequireHttpsMetadata = false;
-                    x.SaveToken = true;
-                    x.TokenValidationParameters = new TokenValidationParameters
-                    {
+                        ValidIssuer = false.ToString(),
+                        ValidAudience = false.ToString(),
                         ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(key),
-                        ValidateIssuer = false,
-                        ValidateAudience = false
+                        IssuerSigningKey = new SymmetricSecurityKey(signingKey)
                     };
                 });
+
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IProductService, ProductService>();
@@ -113,14 +82,8 @@ namespace SmallSnack.Microservice
                 app.UseDeveloperExceptionPage();
             }
 
-            // global cors policy
-            app.UseCors(x => x
-                .AllowAnyOrigin()
-                .AllowAnyMethod()
-                .AllowAnyHeader());
-
+            
             app.UseAuthentication();
-
             app.UseMvc();
 
             // Enable middleware to serve generated Swagger as a JSON endpoint.

@@ -1,10 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SmallSnack.Microservice.Domain.Commands;
 using SmallSnack.Microservice.Domain.Entities;
+using SmallSnack.Microservice.Domain.Enums;
 using SmallSnack.Microservice.Domain.Queries;
 
 namespace SmallSnack.Microservice.Controllers
@@ -20,12 +22,14 @@ namespace SmallSnack.Microservice.Controllers
             _mediator = mediator;
         }
         
+        [Authorize(Roles = "Administrator")]
         [HttpPost]
         public async Task<bool> Post(AddProductCommand command)
         {
             return await _mediator.Send(command);
         }
 
+        [Authorize(Roles = "Administrator")]
         [HttpPut]
         public async Task<bool> Put(UpdateProductCommand command)
         {

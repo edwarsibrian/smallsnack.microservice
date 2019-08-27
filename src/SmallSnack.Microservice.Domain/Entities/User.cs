@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using SmallSnack.Microservice.Domain.Enums;
 
 namespace SmallSnack.Microservice.Domain.Entities
 {
@@ -11,7 +12,7 @@ namespace SmallSnack.Microservice.Domain.Entities
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
-        public bool IsAdmin { get; set; }
+        public string Role { get; set; }
 
         public string FirstName { get; set; }
 
@@ -20,10 +21,8 @@ namespace SmallSnack.Microservice.Domain.Entities
         [Required]
         public string Username { get; set; }
 
-        public byte[] PasswordHash { get; set; }
-
-        public byte[] PasswordSalt { get; set; }
-
+        public string Password { get; set; }
+        
         public IEnumerable<PurchaseHistory> PurchaseHistories { get; set; }
     }
 }

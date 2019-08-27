@@ -2,9 +2,13 @@
 using SmallSnack.Microservice.Domain.Repo;
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 
 namespace SmallSnack.Microservice.Domain.Services
 {
@@ -13,7 +17,7 @@ namespace SmallSnack.Microservice.Domain.Services
         Task<User> Authenticate(string username, string password);
         IEnumerable<User> GetAll();
         User GetById(int id);
-        Task<User> Create(User user, string password);
+        Task<User> Create(User user);
         void Update(User user, string password = null);
         void Delete(int id);
     }
@@ -21,10 +25,12 @@ namespace SmallSnack.Microservice.Domain.Services
     public class UserService : IUserService
     {
         private DataContext _context;
+        private readonly IConfiguration _configuration;
 
-        public UserService(DataContext context)
+        public UserService(DataContext context, IConfiguration configuration)
         {
             _context = context;
+            _configuration = configuration;
         }
 
         public async Task<User> Authenticate(string username, string password)
@@ -32,18 +38,7 @@ namespace SmallSnack.Microservice.Domain.Services
             if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
                 return null;
 
-            var user = await _context.Users.SingleOrDefaultAsync(x => x.Username == username);
-
-            // check if username exists
-            if (user == null)
-                return null;
-
-            // check if password is correct
-            if (!VerifyPasswordHash(password, user.PasswordHash, user.PasswordSalt))
-                return null;
-
-            // authentication successful
-            return user;
+            return await _context.Users.SingleOrDefaultAsync(x => x.Username == username && x.Password == password);
         }
 
         public IEnumerable<User> GetAll()
@@ -56,21 +51,15 @@ namespace SmallSnack.Microservice.Domain.Services
             throw new System.NotImplementedException();
         }
 
-        public async Task<User> Create(User user, string password)
+        public async Task<User> Create(User user)
         {
             // validation
-            if (string.IsNullOrWhiteSpace(password))
-                throw new Exception("Password is required");
+            if (string.IsNullOrWhiteSpace(user.Password) && string.IsNullOrWhiteSpace(user.Username))
+                throw new Exception("Username and Password is required");
 
             if (_context.Users.Any(x => x.Username == user.Username))
                 throw new Exception("Username \"" + user.Username + "\" is already taken");
-
-            byte[] passwordHash, passwordSalt;
-            CreatePasswordHash(password, out passwordHash, out passwordSalt);
-
-            user.PasswordHash = passwordHash;
-            user.PasswordSalt = passwordSalt;
-
+            
             await _context.Users.AddAsync(user);
             await _context.SaveChangesAsync();
 
