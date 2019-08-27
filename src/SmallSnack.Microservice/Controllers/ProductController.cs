@@ -20,12 +20,14 @@ namespace SmallSnack.Microservice.Controllers
             _mediator = mediator;
         }
         
+        [Authorize(Roles = "Administrator")]
         [HttpPost]
         public async Task<bool> Post(AddProductCommand command)
         {
             return await _mediator.Send(command);
         }
 
+        [Authorize(Roles = "Administrator")]
         [HttpPut]
         public async Task<bool> Put(UpdateProductCommand command)
         {

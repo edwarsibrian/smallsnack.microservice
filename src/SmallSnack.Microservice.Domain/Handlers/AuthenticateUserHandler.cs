@@ -29,6 +29,7 @@ namespace SmallSnack.Microservice.Domain
                 userAuthenticateResponse.UserName = user.Username;
                 userAuthenticateResponse.FirstName = user.FirstName;
                 userAuthenticateResponse.LastName = user.LastName;
+                userAuthenticateResponse.Role = user.Role;
             }
 
             return userAuthenticateResponse;
