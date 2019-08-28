@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SmallSnack.Microservice.Domain.Entities
@@ -20,6 +22,9 @@ namespace SmallSnack.Microservice.Domain.Entities
         public double Price { get; set; }
 
         public int Linking { get; set; }
+
+        [NotMapped]
+        public IEnumerable<ProductPriceUpdtHistory> ProductPriceUpdtHistories { get; set; }
 
     }
 }

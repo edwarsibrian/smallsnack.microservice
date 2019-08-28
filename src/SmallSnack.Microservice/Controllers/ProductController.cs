@@ -29,7 +29,14 @@ namespace SmallSnack.Microservice.Controllers
 
         [Authorize(Roles = "Administrator")]
         [HttpPut]
-        public async Task<bool> Put(UpdateProductCommand command)
+        public async Task<bool> Put(UpdatePriceProductCommand command)
+        {
+            return await _mediator.Send(command);
+        }
+
+        [Authorize(Roles = "Administrator")]
+        [HttpDelete]
+        public async Task<bool> Delete(DeleteProductCommand command)
         {
             return await _mediator.Send(command);
         }

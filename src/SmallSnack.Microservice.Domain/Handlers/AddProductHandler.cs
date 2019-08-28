@@ -25,7 +25,7 @@ namespace SmallSnack.Microservice.Domain
                 Price = request.Price
             };
 
-            return await _productService.AddProduct(product);
+            return await _productService.Add(product);
         }
     }
 }
