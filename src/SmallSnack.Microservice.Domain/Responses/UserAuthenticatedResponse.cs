@@ -1,4 +1,6 @@
-﻿namespace SmallSnack.Microservice.Domain.Responses
+﻿using SmallSnack.Microservice.Domain.Enums;
+
+namespace SmallSnack.Microservice.Domain.Responses
 {
     public class UserAuthenticatedResponse
     {
@@ -7,6 +9,6 @@
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Token { get; set; }
-        public string Role { get; set; }
+        public Role Role { get; set; }
     }
 }

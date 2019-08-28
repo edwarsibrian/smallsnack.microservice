@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using SmallSnack.Microservice.Domain.Enums;
 
 namespace SmallSnack.Microservice.Domain.Entities
 {
@@ -11,7 +12,7 @@ namespace SmallSnack.Microservice.Domain.Entities
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
-        public string Role { get; set; }
+        public Role Role { get; set; }
 
         public string FirstName { get; set; }
 
