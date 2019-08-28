@@ -21,6 +21,13 @@ namespace SmallSnack.Microservice.Domain.Repo
                 .HasOne(c => c.User)
                 .WithMany(c => c.PurchaseHistories)
                 .HasForeignKey(c => c.Id);
+
+
+            modelBuilder.Entity<ProductPriceUpdtHistory>()
+                .HasOne(c => c.Product)
+                .WithMany(c => c.ProductPriceUpdtHistories)
+                .HasForeignKey(c => c.Id);
+
         }
     }
 }
