@@ -44,7 +44,7 @@ namespace SmallSnack.Microservice.Controllers
                 Subject = new ClaimsIdentity(new Claim[]
                 {
                     new Claim(ClaimTypes.Name, userResponse.Id.ToString()),
-                    new Claim("role", userResponse.Role) 
+                    new Claim("role", userResponse.Role.ToString()) 
                 }),
                 Expires = DateTime.UtcNow.AddDays(7),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)

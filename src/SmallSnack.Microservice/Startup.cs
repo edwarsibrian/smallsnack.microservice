@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Http;
 using SmallSnack.Microservice.Domain.Commands;
 using SmallSnack.Microservice.Domain.Repo;
 using Swashbuckle.AspNetCore.Swagger;
+using Swashbuckle.AspNetCore.SwaggerUI;
 
 namespace SmallSnack.Microservice
 {
@@ -55,6 +56,13 @@ namespace SmallSnack.Microservice
             services.AddSwaggerGen(c =>
                 {
                     c.SwaggerDoc("v1", new Info {Title = "SmallSnack API", Version = "v1"});
+                    c.AddSecurityDefinition("Bearer", new ApiKeyScheme
+                    {
+                        Description = "Authorization: Bearer {token}",
+                        Name = "Authorization",
+                        In = "header",
+                        Type = "apiKey"
+                    });
                 }
             );
 
@@ -128,6 +136,7 @@ namespace SmallSnack.Microservice
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "SmallSnack API");
+                c.DocExpansion(DocExpansion.None);
             });
         }
     }
